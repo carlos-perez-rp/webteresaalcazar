@@ -67,9 +67,9 @@
                 </div>
                 
                 <div class="hero-slide">
-                    <h1>No necesitas años de terapia para avanzar</h1>
+                    <h1>Terapia directa, sin rodeos innecesarios</h1>
                     <div class="hero-divider"></div>
-                    <p>Necesitas claridad, herramientas y la verdad para crecer</p>
+                    <p>Claridad, herramientas y la verdad para crecer</p>
                 </div>
 				
             </div>
@@ -296,7 +296,7 @@ Su estilo es muy claro y directo, sin rodeos innecesarios, pero siempre desde un
                 
                 <div class="contact-buttons">
                     <a href="https://teresaalcazar.simplybook.it/v2/" target="_blank" class="btn btn-primary">Reserva tu cita</a>
-                    <a href="mailto:alcazar.teresa@gmail.com?subject=Consulta%20desde%20la%20web&body=Hola%20Teresa,%20quisiera%20más%20información%20sobre%20las%20sesiones" class="btn btn-outline">Envía un email</a>
+                    <a href="mailto:teresaalcazar@cop.es?subject=Consulta%20desde%20la%20web&body=Hola%20Teresa,%20quisiera%20más%20información%20sobre%20las%20sesiones" class="btn btn-outline">Envía un email</a>
                 </div>
                 
                 <div class="contact-info">
@@ -307,7 +307,7 @@ Su estilo es muy claro y directo, sin rodeos innecesarios, pero siempre desde un
                     
                     <div class="contact-item">
                         <i class="fas fa-envelope"></i>
-                        <a href="mailto:alcazar.teresa@gmail.com">alcazar.teresa@gmail.com</a>
+                        <a href="mailto:teresaalcazar@cop.es">teresaalcazar@cop.es</a>
                     </div>
                     
                     <div class="contact-item">
@@ -328,11 +328,45 @@ Su estilo es muy claro y directo, sin rodeos innecesarios, pero siempre desde un
                 </div>
                 <p>&copy; 2025 Teresa Alcázar - TEA | Psicología Intuitiva Online | Todos los derechos reservados</p>
                 <p class="legal-note">Actividad sanitaria registrada. Las técnicas complementarias se integran como herramientas de acompañamiento personal.</p>
+                <p class="legal-links">
+                    <a href="aviso-legal.html">Aviso Legal</a> |
+                    <a href="politica-privacidad.html">Política de Privacidad</a> |
+                    <a href="politica-cookies.html">Política de Cookies</a>
+                </p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript -->
     <script src="assets/js/main.js"></script>
+	<!-- Banner de cookies -->
+<div id="cookie-banner" class="cookie-banner hidden">
+  <div class="cookie-content">
+    <h3>Gestionar consentimiento</h3>
+    <p>Usamos cookies para mejorar tu experiencia de navegación y analizar el uso de la web. Puedes aceptar, rechazar o elegir tus preferencias. <a href="politica-cookies.html" style="color: #801336; text-decoration: underline;">Más información</a></p>
+    <div class="cookie-buttons">
+      <button onclick="acceptAllCookies()">Aceptar</button>
+      <button onclick="rejectAllCookies()">Denegar</button>
+      <button onclick="showPreferences()">Ver preferencias</button>
+    </div>
+  </div>
+</div>
+
+<!-- Panel de preferencias -->
+<div id="preferences-modal" class="cookie-modal hidden">
+  <div class="modal-content">
+    <span class="close" onclick="closePreferences()">&times;</span>
+    <h3>Preferencias de cookies</h3>
+    <form id="cookie-preferences-form">
+      <label><input type="checkbox" disabled checked /> Cookies necesarias (siempre activas)</label><br>
+      <label><input type="checkbox" id="analytics-cookies" /> Cookies analíticas</label><br>
+      <label><input type="checkbox" id="marketing-cookies" /> Cookies de marketing</label><br>
+    </form>
+    <button onclick="savePreferences()">Guardar preferencias</button>
+  </div>
+</div>
+
+<script src="main.js"></script>
+
 </body>
 </html>

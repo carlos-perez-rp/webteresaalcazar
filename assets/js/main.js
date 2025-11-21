@@ -488,4 +488,48 @@ initTestimonialsCarousel();
         });
     });
 
-});// JavaScript Document
+});
+document.addEventListener("DOMContentLoaded", function () {
+  const banner = document.getElementById("cookie-banner");
+  const modal = document.getElementById("preferences-modal");
+
+  const saved = localStorage.getItem("cookieConsent");
+  if (!saved) banner.classList.remove("hidden");
+
+  window.acceptAllCookies = function () {
+    localStorage.setItem("cookieConsent", JSON.stringify({
+      analytics: true,
+      marketing: true
+    }));
+    banner.classList.add("hidden");
+  };
+
+  window.rejectAllCookies = function () {
+    localStorage.setItem("cookieConsent", JSON.stringify({
+      analytics: false,
+      marketing: false
+    }));
+    banner.classList.add("hidden");
+  };
+
+  window.showPreferences = function () {
+    modal.classList.remove("hidden");
+  };
+
+  window.closePreferences = function () {
+    modal.classList.add("hidden");
+  };
+
+  window.savePreferences = function () {
+    const analytics = document.getElementById("analytics-cookies").checked;
+    const marketing = document.getElementById("marketing-cookies").checked;
+    localStorage.setItem("cookieConsent", JSON.stringify({
+      analytics,
+      marketing
+    }));
+    modal.classList.add("hidden");
+    banner.classList.add("hidden");
+  };
+});
+
+// JavaScript Document
