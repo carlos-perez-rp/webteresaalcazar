@@ -405,7 +405,7 @@ html {
 
 /* Testimonials */
 .testimonials {
-    padding: 5rem 0;
+    padding: 5rem 0;    
 }
 
 .testimonials-grid {
@@ -450,6 +450,100 @@ html {
     color: #ffc107;
     margin-bottom: 1rem;
     font-size: 1.2rem;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 5rem 0;
+    background: var(--light-bg);
+}
+
+.faq-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.faq-question {
+    width: 100%;
+    background: white;
+    border: none;
+    padding: 1.5rem 2rem;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    transition: all 0.3s ease;
+}
+
+.faq-question:hover {
+    color: var(--primary-color);
+}
+
+.faq-question span {
+    flex: 1;
+    padding-right: 1rem;
+}
+
+.faq-icon {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(45deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    background: white;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px;
+    padding: 0 2rem 1.5rem 2rem;
+}
+
+.faq-answer p {
+    color: #555;
+    line-height: 1.8;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* FAQ Responsive */
+@media (max-width: 768px) {
+    .faq-question {
+        padding: 1.2rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .faq-item.active .faq-answer {
+        padding: 0 1.5rem 1.2rem 1.5rem;
+    }
+
+    .faq-answer p {
+        font-size: 0.95rem;
+    }
 }
 
 /* Contact Section */
@@ -746,8 +840,8 @@ html {
 
 .footer .legal-links {
   margin-top: .5rem;
-  font-size: .9rem;
-  opacity: .9;
+  font-size: .75rem;
+  opacity: .85;
 }
 .footer .legal-links a {
   color: inherit;

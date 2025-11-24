@@ -1,0 +1,24 @@
+# robots.txt para www.teresaalcazar.com
+# Teresa Alcázar - Psicología Intuitiva Online
+
+User-agent: *
+Allow: /
+
+# No indexar archivos de sistema
+Disallow: /assets/
+Disallow: *.css
+Disallow: *.js
+
+# Permitir indexación de páginas principales
+Allow: /index.html
+Allow: /especialidades.html
+Allow: /aviso-legal.html
+Allow: /politica-privacidad.html
+Allow: /politica-cookies.html
+
+# Sitemap
+Sitemap: https://www.teresaalcazar.com/sitemap.xml
+
+# Información adicional
+# Contacto: teresaalcazar@cop.es
+# Psicóloga Sanitaria Colegiada M-40146

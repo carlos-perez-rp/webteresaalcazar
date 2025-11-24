@@ -489,6 +489,31 @@ initTestimonialsCarousel();
     });
 
 });
+
+// FAQ Accordion Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const faqQuestions = document.querySelectorAll('.faq-question');
+
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const faqItem = question.parentElement;
+            const isActive = faqItem.classList.contains('active');
+
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Toggle current FAQ item
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        });
+    });
+
+    console.log('FAQ Accordion initialized');
+});
+
 document.addEventListener("DOMContentLoaded", function () {
   const banner = document.getElementById("cookie-banner");
   const modal = document.getElementById("preferences-modal");
