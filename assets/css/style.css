@@ -456,6 +456,7 @@ html {
 .faq-section {
     padding: 5rem 0;
     background: var(--light-bg);
+    scroll-margin-top: 100px; /* Compensar el header fijo al hacer scroll */
 }
 
 .faq-container {
@@ -788,6 +789,18 @@ html {
   height: 100%;
   object-fit: cover; /* recorta sin deformar */
   z-index: 0;
+  /* Optimizaciones para móviles */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Asegurar que el video se muestre en móviles */
+@media (max-width: 768px) {
+  .hero-video {
+    display: block;
+    object-fit: cover;
+  }
 }
 
 .hero-content {

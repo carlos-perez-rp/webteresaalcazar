@@ -43,13 +43,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Change slide every 4 seconds
     setInterval(showNextSlide, 5000);
 
+    // Manejar scroll al cargar la página con hash (ej: desde especialidades.html#faq)
+    if (window.location.hash) {
+        setTimeout(() => {
+            const target = document.querySelector(window.location.hash);
+            if (target) {
+                const offset = target.id === 'faq' ? 120 : 80;
+                const offsetTop = target.offsetTop - offset;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }, 100);
+    }
+
     // Smooth Scrolling for internal links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                const offsetTop = target.offsetTop - 80; // Account for fixed header
+                // Usar offset mayor para la sección FAQ
+                const offset = target.id === 'faq' ? 120 : 80;
+                const offsetTop = target.offsetTop - offset;
                 window.scrollTo({
                     top: offsetTop,
                     behavior: 'smooth'
@@ -465,6 +482,40 @@ initTestimonialsCarousel();
     window.removeEventListener('scroll', updateScrollProgress);
     window.addEventListener('scroll', debouncedScrollProgress);
 
+    // Forzar reproducción de video en móviles
+    const heroVideo = document.getElementById('heroVideo');
+    if (heroVideo) {
+        // Intentar reproducir el video
+        const playVideo = () => {
+            heroVideo.play().catch(err => {
+                console.log('Video autoplay no disponible:', err);
+                // Si falla el autoplay, intentar reproducir al interactuar
+                document.addEventListener('touchstart', function playOnTouch() {
+                    heroVideo.play();
+                    document.removeEventListener('touchstart', playOnTouch);
+                }, { once: true });
+            });
+        };
+
+        // Intentar reproducir cuando el video esté listo
+        if (heroVideo.readyState >= 3) {
+            playVideo();
+        } else {
+            heroVideo.addEventListener('loadeddata', playVideo);
+        }
+
+        // Asegurar que el video se reproduzca cuando sea visible
+        const videoObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && heroVideo.paused) {
+                    heroVideo.play().catch(() => {});
+                }
+            });
+        }, { threshold: 0.5 });
+
+        videoObserver.observe(heroVideo);
+    }
+
     // Add keyboard navigation support
     document.addEventListener('keydown', function(e) {
         // ESC key to close mobile menu
@@ -495,9 +546,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const faqQuestions = document.querySelectorAll('.faq-question');
 
     faqQuestions.forEach(question => {
-        question.addEventListener('click', () => {
+        question.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevenir comportamiento de scroll por defecto
+            e.stopPropagation(); // Detener propagación del evento
+
             const faqItem = question.parentElement;
             const isActive = faqItem.classList.contains('active');
+
+            // Guardar la posición actual del scroll
+            const currentScrollPos = window.pageYOffset;
 
             // Close all other FAQ items
             document.querySelectorAll('.faq-item').forEach(item => {
@@ -508,6 +565,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isActive) {
                 faqItem.classList.add('active');
             }
+
+            // Mantener el scroll en la posición actual después de un pequeño delay
+            setTimeout(() => {
+                window.scrollTo({
+                    top: currentScrollPos,
+                    behavior: 'instant'
+                });
+            }, 10);
         });
     });
 
