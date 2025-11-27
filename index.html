@@ -114,19 +114,10 @@
 
     <!-- Hero Section -->
     <section id="inicio" class="hero">
-		<video
-            autoplay
-            muted
-            loop
-            playsinline
-            webkit-playsinline
-            preload="metadata"
-            poster="assets/images/video/TEA-poster.jpg"
-            class="hero-video"
-            id="heroVideo"
-            x-webkit-airplay="allow"
-            disablePictureInPicture
-        >
+		<video autoplay muted loop playsinline class="hero-video" id="heroVideo">
+            <!-- WebM para móviles (mejor compatibilidad y más ligero) -->
+            <source src="assets/images/video/TEA.webm" type="video/webm" media="(max-width: 768px)">
+            <!-- MP4 para desktop -->
             <source src="assets/images/video/TEA.mp4" type="video/mp4">
             Tu navegador no soporta video en HTML5.
         </video>

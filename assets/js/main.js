@@ -48,14 +48,12 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             const target = document.querySelector(window.location.hash);
             if (target) {
-                const offset = target.id === 'faq' ? 120 : 80;
-                const offsetTop = target.offsetTop - offset;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             }
-        }, 100);
+        }, 300);
     }
 
     // Smooth Scrolling for internal links
@@ -64,12 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                // Usar offset mayor para la sección FAQ
-                const offset = target.id === 'faq' ? 120 : 80;
-                const offsetTop = target.offsetTop - offset;
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
             }
         });
@@ -482,86 +477,13 @@ initTestimonialsCarousel();
     window.removeEventListener('scroll', updateScrollProgress);
     window.addEventListener('scroll', debouncedScrollProgress);
 
-    // Forzar reproducción de video en móviles con múltiples estrategias
+    // Simple video initialization para WebM/MP4
     const heroVideo = document.getElementById('heroVideo');
     if (heroVideo) {
-        // Asegurar que el video está realmente silenciado
-        heroVideo.muted = true;
-        heroVideo.volume = 0;
-        heroVideo.defaultMuted = true;
-
-        // Función para forzar reproducción
-        const forcePlay = () => {
-            const playPromise = heroVideo.play();
-
-            if (playPromise !== undefined) {
-                playPromise
-                    .then(() => {
-                        console.log('Video reproduciéndose correctamente');
-                    })
-                    .catch(err => {
-                        console.log('Autoplay bloqueado, intentando estrategias alternativas:', err);
-
-                        // Estrategia 1: Reproducir al primer toque
-                        const playOnInteraction = () => {
-                            heroVideo.muted = true;
-                            heroVideo.play().then(() => {
-                                console.log('Video iniciado tras interacción');
-                            }).catch(() => {
-                                console.log('Falló reproducción tras interacción');
-                            });
-                        };
-
-                        // Escuchar múltiples eventos de interacción
-                        document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
-                        document.addEventListener('click', playOnInteraction, { once: true });
-                        document.addEventListener('scroll', playOnInteraction, { once: true, passive: true });
-                    });
-            }
-        };
-
-        // Estrategia 2: Intentar reproducir inmediatamente
-        forcePlay();
-
-        // Estrategia 3: Intentar cuando el video cargue metadata
-        heroVideo.addEventListener('loadedmetadata', forcePlay);
-
-        // Estrategia 4: Intentar cuando el video pueda reproducirse
-        heroVideo.addEventListener('canplay', forcePlay);
-
-        // Estrategia 5: Usar IntersectionObserver para reproducir cuando sea visible
-        const videoObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    if (heroVideo.paused) {
-                        forcePlay();
-                    }
-                } else {
-                    // Pausar cuando no es visible (ahorro de batería)
-                    heroVideo.pause();
-                }
-            });
-        }, { threshold: 0.25 });
-
-        videoObserver.observe(heroVideo);
-
-        // Estrategia 6: Manejar errores de carga
-        heroVideo.addEventListener('error', function(e) {
-            console.error('Error al cargar video:', e);
-            // Ocultar video y mostrar solo el fondo de color
-            heroVideo.style.display = 'none';
+        heroVideo.play().catch(() => {
+            // Si falla autoplay, reproducir al primer toque
+            document.addEventListener('touchstart', () => heroVideo.play(), { once: true });
         });
-
-        // Estrategia 7: Detectar si el video realmente se está reproduciendo
-        let checkInterval = setInterval(() => {
-            if (heroVideo.currentTime > 0 && !heroVideo.paused && !heroVideo.ended && heroVideo.readyState > 2) {
-                console.log('Video confirmado reproduciéndose');
-                clearInterval(checkInterval);
-            }
-        }, 1000);
-
-        // Limpiar interval después de 10 segundos
-        setTimeout(() => clearInterval(checkInterval), 10000);
     }
 
     // Add keyboard navigation support
@@ -589,80 +511,37 @@ initTestimonialsCarousel();
 
 });
 
-// FAQ Accordion Functionality
+// FAQ Accordion Functionality - Solución simplificada
 document.addEventListener('DOMContentLoaded', function() {
     const faqQuestions = document.querySelectorAll('.faq-question');
-    let isScrollLocked = false;
-
-    // Función para bloquear el scroll
-    const lockScroll = () => {
-        isScrollLocked = true;
-        document.documentElement.style.scrollBehavior = 'auto';
-    };
-
-    // Función para desbloquear el scroll
-    const unlockScroll = () => {
-        setTimeout(() => {
-            isScrollLocked = false;
-            document.documentElement.style.scrollBehavior = 'smooth';
-        }, 500);
-    };
-
-    // Prevenir scroll automático durante la interacción con FAQ
-    const preventAutoScroll = (e) => {
-        if (isScrollLocked) {
-            e.preventDefault();
-            return false;
-        }
-    };
 
     faqQuestions.forEach(question => {
-        question.addEventListener('click', (e) => {
+        question.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
 
-            const faqItem = question.parentElement;
-            const isActive = faqItem.classList.contains('active');
+            const faqItem = this.parentElement;
+            const wasActive = faqItem.classList.contains('active');
 
-            // Bloquear el scroll
-            lockScroll();
-
-            // Obtener posición de la pregunta clickeada ANTES de cambiar el DOM
-            const questionRect = question.getBoundingClientRect();
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const questionTop = questionRect.top + scrollTop;
-            const headerOffset = 100;
-            const targetScroll = questionTop - headerOffset;
-
-            // Close all other FAQ items
+            // Cerrar todos los items
             document.querySelectorAll('.faq-item').forEach(item => {
                 item.classList.remove('active');
             });
 
-            // Toggle current FAQ item
-            if (!isActive) {
+            // Si no estaba activo, abrirlo
+            if (!wasActive) {
                 faqItem.classList.add('active');
+
+                // Usar scrollIntoView con block: 'nearest' para evitar saltos innecesarios
+                setTimeout(() => {
+                    faqItem.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'nearest',
+                        inline: 'nearest'
+                    });
+                }, 100);
             }
-
-            // Usar múltiples frames para asegurar que el scroll se mantiene
-            requestAnimationFrame(() => {
-                window.scrollTo(0, targetScroll);
-
-                requestAnimationFrame(() => {
-                    window.scrollTo(0, targetScroll);
-
-                    // Tercera verificación después de que termine la animación CSS
-                    setTimeout(() => {
-                        window.scrollTo(0, targetScroll);
-                        unlockScroll();
-                    }, 450);
-                });
-            });
         });
     });
-
-    // Prevenir scroll automático del navegador
-    window.addEventListener('scroll', preventAutoScroll, { passive: false });
 
     console.log('FAQ Accordion initialized');
 });
