@@ -454,9 +454,15 @@ html {
 
 /* FAQ Section */
 .faq-section {
-    padding: 5rem 0;
+    padding: 8rem 0 5rem 0; /* Más padding-top para evitar que el header tape el contenido */
     background: var(--light-bg);
     scroll-margin-top: 100px; /* Compensar el header fijo al hacer scroll */
+}
+
+@media (max-width: 768px) {
+    .faq-section {
+        padding: 6rem 0 5rem 0; /* Ajuste para móviles */
+    }
 }
 
 .faq-container {
@@ -471,6 +477,7 @@ html {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: all 0.3s ease;
+    scroll-margin-top: 120px; /* Prevenir scroll automático del navegador */
 }
 
 .faq-item:hover {
@@ -517,10 +524,11 @@ html {
     overflow: hidden;
     transition: max-height 0.4s ease, padding 0.4s ease;
     background: white;
+    will-change: max-height; /* Optimización de rendimiento */
 }
 
 .faq-item.active .faq-answer {
-    max-height: 500px;
+    max-height: 800px; /* Aumentado para respuestas más largas */
     padding: 0 2rem 1.5rem 2rem;
 }
 

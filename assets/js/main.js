@@ -544,17 +544,47 @@ initTestimonialsCarousel();
 // FAQ Accordion Functionality
 document.addEventListener('DOMContentLoaded', function() {
     const faqQuestions = document.querySelectorAll('.faq-question');
+    let isScrollLocked = false;
+
+    // Función para bloquear el scroll
+    const lockScroll = () => {
+        isScrollLocked = true;
+        document.documentElement.style.scrollBehavior = 'auto';
+    };
+
+    // Función para desbloquear el scroll
+    const unlockScroll = () => {
+        setTimeout(() => {
+            isScrollLocked = false;
+            document.documentElement.style.scrollBehavior = 'smooth';
+        }, 500);
+    };
+
+    // Prevenir scroll automático durante la interacción con FAQ
+    const preventAutoScroll = (e) => {
+        if (isScrollLocked) {
+            e.preventDefault();
+            return false;
+        }
+    };
 
     faqQuestions.forEach(question => {
         question.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevenir comportamiento de scroll por defecto
-            e.stopPropagation(); // Detener propagación del evento
+            e.preventDefault();
+            e.stopPropagation();
 
             const faqItem = question.parentElement;
             const isActive = faqItem.classList.contains('active');
 
-            // Guardar la posición actual del scroll
-            const currentScrollPos = window.pageYOffset;
+            // Bloquear el scroll
+            lockScroll();
+
+            // Obtener posición de la pregunta clickeada ANTES de cambiar el DOM
+            const questionRect = question.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const questionTop = questionRect.top + scrollTop;
+            const headerOffset = 100;
+            const targetScroll = questionTop - headerOffset;
 
             // Close all other FAQ items
             document.querySelectorAll('.faq-item').forEach(item => {
@@ -566,15 +596,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 faqItem.classList.add('active');
             }
 
-            // Mantener el scroll en la posición actual después de un pequeño delay
-            setTimeout(() => {
-                window.scrollTo({
-                    top: currentScrollPos,
-                    behavior: 'instant'
+            // Usar múltiples frames para asegurar que el scroll se mantiene
+            requestAnimationFrame(() => {
+                window.scrollTo(0, targetScroll);
+
+                requestAnimationFrame(() => {
+                    window.scrollTo(0, targetScroll);
+
+                    // Tercera verificación después de que termine la animación CSS
+                    setTimeout(() => {
+                        window.scrollTo(0, targetScroll);
+                        unlockScroll();
+                    }, 450);
                 });
-            }, 10);
+            });
         });
     });
+
+    // Prevenir scroll automático del navegador
+    window.addEventListener('scroll', preventAutoScroll, { passive: false });
 
     console.log('FAQ Accordion initialized');
 });
@@ -621,5 +661,6 @@ document.addEventListener("DOMContentLoaded", function () {
     banner.classList.add("hidden");
   };
 });
+
 
 // JavaScript Document
