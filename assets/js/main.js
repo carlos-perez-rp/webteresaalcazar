@@ -482,38 +482,86 @@ initTestimonialsCarousel();
     window.removeEventListener('scroll', updateScrollProgress);
     window.addEventListener('scroll', debouncedScrollProgress);
 
-    // Forzar reproducción de video en móviles
+    // Forzar reproducción de video en móviles con múltiples estrategias
     const heroVideo = document.getElementById('heroVideo');
     if (heroVideo) {
-        // Intentar reproducir el video
-        const playVideo = () => {
-            heroVideo.play().catch(err => {
-                console.log('Video autoplay no disponible:', err);
-                // Si falla el autoplay, intentar reproducir al interactuar
-                document.addEventListener('touchstart', function playOnTouch() {
-                    heroVideo.play();
-                    document.removeEventListener('touchstart', playOnTouch);
-                }, { once: true });
-            });
+        // Asegurar que el video está realmente silenciado
+        heroVideo.muted = true;
+        heroVideo.volume = 0;
+        heroVideo.defaultMuted = true;
+
+        // Función para forzar reproducción
+        const forcePlay = () => {
+            const playPromise = heroVideo.play();
+
+            if (playPromise !== undefined) {
+                playPromise
+                    .then(() => {
+                        console.log('Video reproduciéndose correctamente');
+                    })
+                    .catch(err => {
+                        console.log('Autoplay bloqueado, intentando estrategias alternativas:', err);
+
+                        // Estrategia 1: Reproducir al primer toque
+                        const playOnInteraction = () => {
+                            heroVideo.muted = true;
+                            heroVideo.play().then(() => {
+                                console.log('Video iniciado tras interacción');
+                            }).catch(() => {
+                                console.log('Falló reproducción tras interacción');
+                            });
+                        };
+
+                        // Escuchar múltiples eventos de interacción
+                        document.addEventListener('touchstart', playOnInteraction, { once: true, passive: true });
+                        document.addEventListener('click', playOnInteraction, { once: true });
+                        document.addEventListener('scroll', playOnInteraction, { once: true, passive: true });
+                    });
+            }
         };
 
-        // Intentar reproducir cuando el video esté listo
-        if (heroVideo.readyState >= 3) {
-            playVideo();
-        } else {
-            heroVideo.addEventListener('loadeddata', playVideo);
-        }
+        // Estrategia 2: Intentar reproducir inmediatamente
+        forcePlay();
 
-        // Asegurar que el video se reproduzca cuando sea visible
+        // Estrategia 3: Intentar cuando el video cargue metadata
+        heroVideo.addEventListener('loadedmetadata', forcePlay);
+
+        // Estrategia 4: Intentar cuando el video pueda reproducirse
+        heroVideo.addEventListener('canplay', forcePlay);
+
+        // Estrategia 5: Usar IntersectionObserver para reproducir cuando sea visible
         const videoObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && heroVideo.paused) {
-                    heroVideo.play().catch(() => {});
+                if (entry.isIntersecting) {
+                    if (heroVideo.paused) {
+                        forcePlay();
+                    }
+                } else {
+                    // Pausar cuando no es visible (ahorro de batería)
+                    heroVideo.pause();
                 }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: 0.25 });
 
         videoObserver.observe(heroVideo);
+
+        // Estrategia 6: Manejar errores de carga
+        heroVideo.addEventListener('error', function(e) {
+            console.error('Error al cargar video:', e);
+            // Ocultar video y mostrar solo el fondo de color
+            heroVideo.style.display = 'none';
+        });
+
+        // Estrategia 7: Detectar si el video realmente se está reproduciendo
+        let checkInterval = setInterval(() => {
+            if (heroVideo.currentTime > 0 && !heroVideo.paused && !heroVideo.ended && heroVideo.readyState > 2) {
+                console.log('Video confirmado reproduciéndose');
+                clearInterval(checkInterval);
+            }
+        }, 1000);
+
+        // Limpiar interval después de 10 segundos
+        setTimeout(() => clearInterval(checkInterval), 10000);
     }
 
     // Add keyboard navigation support
