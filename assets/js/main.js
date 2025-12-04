@@ -405,9 +405,26 @@ function initTestimonialsCarousel() {
         }
     }
     
-    // Iniciar autoplay
-    startTestimonialAutoplay();
-    
+    // Iniciar autoplay solo en desktop, no en móvil
+    function checkAndStartAutoplay() {
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) {
+            startTestimonialAutoplay();
+        }
+    }
+
+    checkAndStartAutoplay();
+
+    // Reiniciar autoplay al cambiar tamaño de ventana
+    window.addEventListener('resize', () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            stopTestimonialAutoplay();
+        } else if (!testimonialAutoplayInterval) {
+            startTestimonialAutoplay();
+        }
+    });
+
     console.log('Carrusel de testimonios inicializado');
 }
 
